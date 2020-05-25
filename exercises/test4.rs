@@ -1,11 +1,19 @@
-// quiz4.rs
-// This quiz covers the sections:
+// test4.rs
+// This test covers the sections:
 // - Modules
 // - Macros
 
-// Write a macro that passes the quiz! No hints this time, you can do it!
+// Write a macro that passes the test! No hints this time, you can do it!
 
-// I AM NOT DONE
+
+mod macros {
+    #[macro_export]
+    macro_rules! my_macro {
+        ($name:expr) => {
+            format!("Hello {}", $name)
+        };
+    }
+}
 
 #[cfg(test)]
 mod tests {

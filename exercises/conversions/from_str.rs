@@ -10,19 +10,31 @@ struct Person {
     age: usize,
 }
 
-// I AM NOT DONE
 // Steps:
 // 1. If the length of the provided string is 0, then return an error
 // 2. Split the given string on the commas present in it
 // 3. Extract the first element from the split operation and use it as the name
-// 4. If the name is empty, then return an error
-// 5. Extract the other element from the split operation and parse it into a `usize` as the age
-//    with something like `"4".parse::<usize>()`.
+// 4. Extract the other element from the split operation and parse it into a `usize` as the age
 // If while parsing the age, something goes wrong, then return an error
 // Otherwise, then return a Result of a Person object
 impl FromStr for Person {
     type Err = String;
     fn from_str(s: &str) -> Result<Person, Self::Err> {
+        if s.len() == 0 {
+            return Err("input string in empty".to_string());
+        }
+        let list: Vec<&str> = s.split(",").collect();
+        if list.len() != 2 {
+            return Err("format wrong, use '<name>,<age>'".to_string());
+        }
+        let (name, age) = (list[0], list[1]);
+        match age.parse::<usize>() {
+            Ok(age) => Ok(Person {
+                name: name.to_string(),
+                age,
+            }),
+            Err(_) => Err("age is not correct".to_string()),
+        }
     }
 }
 
@@ -41,46 +53,11 @@ mod tests {
     }
     #[test]
     fn good_input() {
-        let p = "John,32".parse::<Person>();
-        assert!(p.is_ok());
-        let p = p.unwrap();
-        assert_eq!(p.name, "John");
-        assert_eq!(p.age, 32);
+        assert!("John,32".parse::<Person>().is_ok());
     }
     #[test]
     #[should_panic]
     fn missing_age() {
-        "John,".parse::<Person>().unwrap();
-    }
-
-    #[test]
-    #[should_panic]
-    fn invalid_age() {
-        "John,twenty".parse::<Person>().unwrap();
-    }
-
-    #[test]
-    #[should_panic]
-    fn missing_comma_and_age() {
         "John".parse::<Person>().unwrap();
     }
-
-    #[test]
-    #[should_panic]
-    fn missing_name() {
-        ",1".parse::<Person>().unwrap();
-    }
-
-    #[test]
-    #[should_panic]
-    fn missing_name_and_age() {
-        ",".parse::<Person>().unwrap();
-    }
-
-    #[test]
-    #[should_panic]
-    fn missing_name_and_invalid_age() {
-        ",one".parse::<Person>().unwrap();
-    }
-
 }
